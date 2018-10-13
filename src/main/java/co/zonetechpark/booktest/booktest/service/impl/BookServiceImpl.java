@@ -25,33 +25,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Books createBooks(BookResource resource) {
-        Optional<Books> optionalBooks = bookRepository.findByName(resource.getName());
+    public Books createBook(BookResource resource) {
+        Optional<Books> optionalBooks = bookRepository.findByTitle(resource.getTitle());
         if(optionalBooks.isPresent()) {
             throw new CustomException("Book with the title already exist", HttpStatus.CONFLICT);
         }
         Books books = new Books();
-        books.setName(resource.getName());
-        books.setRating(resource.getRating());
+        books.setTitle(resource.getTitle());
+        books.setAuthor(resource.getAuthor());
         books.setStatus(true);
         return bookRepository.save(books);
     }
 
     @Override
-    public Books updateBooks(BookResource resource) {
+    public Books updateBook(BookResource resource) {
         Optional<Books> optionalBooks = bookRepository.findById(resource.getId());
-        if(optionalBooks.isPresent()) {
-            Books books = optionalBooks.get();
-            books.setName(resource.getName());
-            books.setRating(resource.getRating());
-            return bookRepository.save(books);
+        if(!optionalBooks.isPresent()) {
+            throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return null;
+        Books books = optionalBooks.get();
+        books.setTitle(resource.getTitle());
+        books.setAuthor(resource.getAuthor());
+        return bookRepository.save(books);
     }
 
     @Override
-    public void deleteBooks(Long bookId) {
-        bookRepository.deleteById(bookId);
+    public void deleteBook(Long bookId) {
+        Optional<Books> books = bookRepository.findById(bookId);
+        if(books.isPresent()) {
+            throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        books.ifPresent(book -> bookRepository.delete(book));
     }
 
     @Override
@@ -65,8 +69,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Books> viewBookByName(String name) {
-        return bookRepository.findByName(name);
+    public Optional<Books> viewBookByTitle(String title) {
+        return bookRepository.findByTitle(title);
+    }
+
+    @Override
+    public Optional<Books> viewBookByAuthor(String author) {
+        return bookRepository.findByAuthor(author);
     }
 
     @Override
@@ -81,5 +90,21 @@ public class BookServiceImpl implements BookService {
             }
             bookRepository.saveAndFlush(books);
         }
+    }
+
+    @Override
+    public void rateBook(Long bookId) {
+        Optional<Books> optionalBooks = bookRepository.findById(bookId);
+        if(!optionalBooks.isPresent()) {
+            throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        Books books = optionalBooks.get();
+
+
+        for (int i = 0; i<=5; i++) {
+//            books.setRating();
+            bookRepository.saveAndFlush(books);
+        }
+
     }
 }

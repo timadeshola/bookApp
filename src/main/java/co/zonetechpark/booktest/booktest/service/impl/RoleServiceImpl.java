@@ -28,7 +28,7 @@ public class RoleServiceImpl implements RoleService {
     public Role createRole(RoleResource resource) {
         Optional<Role> optionalRole = roleRepository.findRoleByName(resource.getName());
         if(optionalRole.isPresent()) {
-            throw new CustomException("Role with this name already exist, please choose a different name", HttpStatus.CONFLICT);
+            throw new CustomException("Role with this title already exist, please choose a different title", HttpStatus.CONFLICT);
         }
         Role role = new Role();
         role.setName(resource.getName());
@@ -39,13 +39,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role updateRole(RoleResource resource) {
         Optional<Role> optionalRole = roleRepository.findById(resource.getRoleId());
-        if(optionalRole.isPresent()) {
-            Role role = optionalRole.get();
-            role.setName(resource.getName());
-            role.setStatus(true);
-            return roleRepository.save(role);
+        if(!optionalRole.isPresent()) {
+            throw new CustomException("Role not found", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return null;
+        Role role = optionalRole.get();
+        role.setName(resource.getName());
+        role.setStatus(true);
+        return roleRepository.save(role);
     }
 
     @Override

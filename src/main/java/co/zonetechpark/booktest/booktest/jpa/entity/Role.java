@@ -1,11 +1,7 @@
 package co.zonetechpark.booktest.booktest.jpa.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -20,7 +16,7 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-@EntityListeners(AuditingEntityListener.class)
+@Audited
 public class Role implements GrantedAuthority, Serializable {
 
     @Id
@@ -34,24 +30,32 @@ public class Role implements GrantedAuthority, Serializable {
     @Column(name = "status")
     private Boolean status;
 
-    @CreatedBy
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(name = "last_modified_by")
-    private String modifiedBy;
-
-    @Column(name = "date_created", nullable = false, updatable = false)
-    @CreatedDate
+    @Column(name = "date_created")
     private Timestamp dateCreated;
 
     @Column(name = "date_updated")
-    @LastModifiedDate
     private Timestamp dateUpdated;
+
+    @Column(name = "date_deleted")
+    private Timestamp dateDeleted;
 
     @Override
     public String getAuthority() {
         return name;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        setDateCreated(new Timestamp(System.currentTimeMillis()));
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        setDateUpdated(new Timestamp(System.currentTimeMillis()));
+    }
+
+    @PreRemove
+    protected void onDelete() {
+        setDateDeleted(new Timestamp(System.currentTimeMillis()));
     }
 }

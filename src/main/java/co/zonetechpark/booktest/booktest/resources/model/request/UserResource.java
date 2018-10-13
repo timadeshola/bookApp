@@ -11,7 +11,7 @@ public class UserResource {
 
     private Long id;
     private String username;
-    public String getPassword;
+    private String password;
     private String firstName;
     private String lastName;
     private String email;

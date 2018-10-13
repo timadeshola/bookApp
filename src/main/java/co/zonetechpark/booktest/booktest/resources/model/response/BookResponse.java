@@ -7,9 +7,9 @@ import java.sql.Timestamp;
 
 @Setter
 @Getter
-public class RoleResponse {
+public class BookResponse {
 
-    private String name;
-    private Boolean status;
+    private String title;
+    private String author;
     private Timestamp dateCreated;
 }

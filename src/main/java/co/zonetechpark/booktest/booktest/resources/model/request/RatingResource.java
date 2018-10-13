@@ -5,9 +5,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class BookResource {
+public class RatingResource {
 
     private Long id;
-    private String title;
-    private String author;
+    private Long bookId;
+    private Double rating;
+    private String comment;
 }

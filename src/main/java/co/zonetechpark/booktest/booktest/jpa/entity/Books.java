@@ -1,15 +1,14 @@
 package co.zonetechpark.booktest.booktest.jpa.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "BOOKS")
@@ -19,36 +18,45 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-@EntityListeners(AuditingEntityListener.class)
+@Audited
 public class Books implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "isbn")
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "title", unique = true)
     @NonNull
-    private String name;
+    private String title;
 
-    @Column(name = "rating")
-    private String rating;
+    @Column(name = "author")
+    private String author;
 
     @Column(name = "status")
     private Boolean status;
 
-    @CreatedBy
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(name = "last_modified_by")
-    private String modifiedBy;
-
-    @Column(name = "date_created", nullable = false, updatable = false)
-    @CreatedDate
+    @Column(name = "date_created")
     private Timestamp dateCreated;
 
     @Column(name = "date_updated")
-    @LastModifiedDate
     private Timestamp dateUpdated;
+
+    @Column(name = "date_deleted")
+    private Timestamp dateDeleted;
+
+    @PrePersist
+    protected void onCreate() {
+        setDateCreated(new Timestamp(System.currentTimeMillis()));
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        setDateUpdated(new Timestamp(System.currentTimeMillis()));
+    }
+
+    @PreRemove
+    protected void onDelete() {
+        setDateDeleted(new Timestamp(System.currentTimeMillis()));
+    }
 }

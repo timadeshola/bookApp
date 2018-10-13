@@ -38,11 +38,11 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserResource resource) {
         Optional<User> optionalUser = userRepository.findUserByUsername(resource.getUsername());
         if(optionalUser.isPresent()) {
-            throw new CustomException("User already exist with the given name, please choose another username", HttpStatus.CONFLICT);
+            throw new CustomException("User already exist with the given title, please choose another username", HttpStatus.CONFLICT);
         }
         User user = new User();
         user.setUsername(resource.getUsername());
-        user.setPassword(passwordEncoder.encode(resource.getPassword));
+        user.setPassword(passwordEncoder.encode(resource.getPassword()));
         user.setFirstName(resource.getFirstName());
         user.setLastName(resource.getLastName());
         user.setEmail(resource.getEmail());

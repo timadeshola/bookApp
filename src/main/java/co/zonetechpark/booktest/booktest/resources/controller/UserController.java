@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -29,9 +30,18 @@ public class UserController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<User> createUser(@RequestBody UserResource resource) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserResource resource) {
         User user = userService.createUser(resource);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        UserResponse response = new UserResponse();
+        response.setUsername(user.getUsername());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setEmail(user.getEmail());
+        response.setPhoneNumber(user.getPhoneNumber());
+        response.setFullName(user.getFullName());
+        response.setDateCreated(user.getDateCreated());
+        response.setStatus(user.getStatus());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 
@@ -59,4 +69,47 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping("view-user")
+    public ResponseEntity<UserResponse> viewUserById(@RequestParam(value = "q") Long userId) {
+        Optional<User> optionalUser = userService.viewUserById(userId);
+        UserResponse response = new UserResponse();
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            response.setUsername(user.getUsername());
+            response.setFirstName(user.getFirstName());
+            response.setLastName(user.getLastName());
+            response.setEmail(user.getEmail());
+            response.setPhoneNumber(user.getPhoneNumber());
+            response.setFullName(user.getFullName());
+            response.setDateCreated(user.getDateCreated());
+            response.setStatus(user.getStatus());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("view")
+    public ResponseEntity<UserResponse> viewUserByUsername(@RequestParam(value = "q") String username) {
+        Optional<User> optionalUser = userService.viewUserByUsername(username);
+        UserResponse response = new UserResponse();
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            response.setUsername(user.getUsername());
+            response.setFirstName(user.getFirstName());
+            response.setLastName(user.getLastName());
+            response.setEmail(user.getEmail());
+            response.setPhoneNumber(user.getPhoneNumber());
+            response.setFullName(user.getFullName());
+            response.setDateCreated(user.getDateCreated());
+            response.setStatus(user.getStatus());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("status")
+    public ResponseEntity<Boolean> toggleUserStatus(@RequestParam(value = "q") Long userId) {
+        userService.toggleUserStatus(userId);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 }

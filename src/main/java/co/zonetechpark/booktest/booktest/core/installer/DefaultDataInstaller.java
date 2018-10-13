@@ -1,6 +1,5 @@
 package co.zonetechpark.booktest.booktest.core.installer;
 
-import co.zonetechpark.booktest.booktest.core.CustomException;
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
 import co.zonetechpark.booktest.booktest.jpa.entity.User;
 import co.zonetechpark.booktest.booktest.jpa.repos.RoleRepository;
@@ -8,12 +7,10 @@ import co.zonetechpark.booktest.booktest.jpa.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 @Component
@@ -62,7 +59,6 @@ public class DefaultDataInstaller implements ApplicationListener<ContextRefreshe
         }
         Role role = new Role();
         role.setName(name);
-        role.setDateCreated(new Timestamp(System.currentTimeMillis()));
         role.setStatus(true);
         role = roleRepository.save(role);
         return role;
@@ -83,7 +79,6 @@ public class DefaultDataInstaller implements ApplicationListener<ContextRefreshe
         user.setPhoneNumber(phoneNumber);
         user.setStatus(true);
         user.setRoles(roles);
-        user.setDateCreated(new Timestamp(System.currentTimeMillis()));
         user.setStatus(true);
         user = userRepository.save(user);
         return user;

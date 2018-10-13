@@ -10,12 +10,14 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Books createBooks(BookResource resource);
-    Books updateBooks(BookResource resource);
-    void deleteBooks(Long bookId);
+    Books createBook(BookResource resource);
+    Books updateBook(BookResource resource);
+    void deleteBook(Long bookId);
     Page<Books> viewAllBooks(Predicate predicate, Pageable pageable);
     Optional<Books> viewBookById(Long bookId);
-    Optional<Books> viewBookByName(String name);
+    Optional<Books> viewBookByTitle(String title);
+    Optional<Books> viewBookByAuthor(String author);
     void toggleBookStatus(Long bookId);
+    void rateBook(Long bookId);
 
 }

@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Books, Long>, QuerydslPredicateExecutor<Books> {
 
-    Optional<Books> findByName(String name);
+    Optional<Books> findByTitle(String title);
+
+    Optional<Books> findByAuthor(String author);
 }
