@@ -11,13 +11,20 @@ import java.util.Optional;
 public interface BookService {
 
     Book createBook(BookResource resource);
-    Book updateBook(BookResource resource);
-    void deleteBook(Long bookId);
-    Page<Book> viewAllBooks(Predicate predicate, Pageable pageable);
-    Optional<Book> viewBookById(Long bookId);
-    Optional<Book> viewBookByTitle(String title);
-    Optional<Book> viewBookByAuthor(String author);
-    void toggleBookStatus(Long bookId);
-    void rateBook(Long bookId);
 
+    Book updateBook(BookResource resource);
+
+    void deleteBook(Long bookId);
+
+    Page<Book> viewAllBooks(Predicate predicate, Pageable pageable);
+
+    Optional<Book> viewBookById(Long bookId);
+
+    Optional<Book> viewBookByTitle(String title);
+
+    Optional<Book> viewBookByAuthor(String author);
+
+    Optional<Book> viewBookByIsbn(String isbn);
+
+    void toggleBookStatus(Long bookId);
 }

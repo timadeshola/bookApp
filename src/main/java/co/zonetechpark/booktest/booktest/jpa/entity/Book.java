@@ -4,12 +4,9 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "AUTHOR_BOOK")
@@ -24,8 +21,10 @@ public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "isbn")
     private Long id;
+
+    @Column(name = "isbn", unique = true)
+    private String isbn;
 
     @Column(name = "title", unique = true)
     @NonNull
@@ -49,6 +48,7 @@ public class Book implements Serializable {
 
     @PrePersist
     protected void onCreate() {
+        setIsbn(getIsbn());
         setDateCreated(new Timestamp(System.currentTimeMillis()));
     }
 
@@ -61,4 +61,15 @@ public class Book implements Serializable {
     protected void onDelete() {
         setDateDeleted(new Timestamp(System.currentTimeMillis()));
     }
+
+    public String getIsbn() {
+        return "ISBN" + "-" + generateUUIDNumber();
+    }
+
+    private static String generateUUIDNumber() {
+        String value = UUID.randomUUID().toString();
+        String[] v =value.split("-");
+        return (v[2]+"-"+v[3]).toUpperCase();
+    }
+
 }

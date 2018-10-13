@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
             throw new CustomException("Role with this title already exist, please choose a different title", HttpStatus.CONFLICT);
         }
         Role role = new Role();
-        role.setName(resource.getName());
+        role.setName(resource.getName().toUpperCase());
         role.setStatus(true);
         return roleRepository.save(role);
     }
@@ -44,7 +45,6 @@ public class RoleServiceImpl implements RoleService {
         }
         Role role = optionalRole.get();
         role.setName(resource.getName());
-        role.setStatus(true);
         return roleRepository.save(role);
     }
 
@@ -69,6 +69,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public void toggleRoleStatus(Long roleId) {
         Optional<Role> optionalRole = roleRepository.findById(roleId);
         if(optionalRole.isPresent()) {

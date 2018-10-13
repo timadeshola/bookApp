@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBook(Long bookId) {
         Optional<Book> books = bookRepository.findById(bookId);
-        if(books.isPresent()) {
+        if(!books.isPresent()) {
             throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         books.ifPresent(book -> bookRepository.delete(book));
@@ -79,6 +79,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Optional<Book> viewBookByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn);
+    }
+
+    @Override
     public void toggleBookStatus(Long bookId) {
         Optional<Book> optionalBooks = bookRepository.findById(bookId);
         if(optionalBooks.isPresent()) {
@@ -90,21 +95,5 @@ public class BookServiceImpl implements BookService {
             }
             bookRepository.saveAndFlush(book);
         }
-    }
-
-    @Override
-    public void rateBook(Long bookId) {
-        Optional<Book> optionalBooks = bookRepository.findById(bookId);
-        if(!optionalBooks.isPresent()) {
-            throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        Book book = optionalBooks.get();
-
-
-        for (int i = 0; i<=5; i++) {
-//            book.setRating();
-            bookRepository.saveAndFlush(book);
-        }
-
     }
 }

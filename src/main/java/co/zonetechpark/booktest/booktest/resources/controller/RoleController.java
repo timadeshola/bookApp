@@ -31,7 +31,7 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @PostMapping("create")
     @ApiOperation(httpMethod = "POST", value = "Resource to create a role", response = RoleResponse.class, nickname = "createRole")
     @ApiResponses(value = {
@@ -52,7 +52,7 @@ public class RoleController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @PutMapping("update")
     @ApiOperation(httpMethod = "PUT", value = "Resource to update a role", response = RoleResponse.class, nickname = "updateRole")
     @ApiResponses(value = {
@@ -61,6 +61,7 @@ public class RoleController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 408, message = "Validation failed"),
             @ApiResponse(code = 422, message = "Resource not found for the Role ID supplied"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
@@ -73,7 +74,7 @@ public class RoleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @DeleteMapping("delete")
     @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a role", responseReference = "true", nickname = "deleteRole")
     @ApiResponses(value = {
@@ -82,6 +83,7 @@ public class RoleController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 408, message = "Validation failed"),
             @ApiResponse(code = 422, message = "Resource not found for the Role ID supplied"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
@@ -92,7 +94,7 @@ public class RoleController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @GetMapping("all")
     @ApiOperation(httpMethod = "GET", value = "Resource to view all roles", response = Role.class, nickname = "viewAllRoles", notes = "You can perform search operations on this method (e.g www.zonetechpark.com/api/v1/role/all?name=author)")
     @ApiResponses(value = {
@@ -113,7 +115,7 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @GetMapping("view-role")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a role by Role ID", response = RoleResponse.class, nickname = "viewRoleById")
     @ApiResponses(value = {
@@ -140,7 +142,7 @@ public class RoleController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @GetMapping("view-role-name")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a role by Role Name", response = RoleResponse.class, nickname = "viewRoleByName")
     @ApiResponses(value = {
@@ -166,7 +168,7 @@ public class RoleController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PutMapping("status")
     @ApiOperation(httpMethod = "PUT", value = "Resource to toggle role status", responseReference = "true", nickname = "toggleRoleStatus")
     @ApiResponses(value = {

@@ -37,7 +37,7 @@ public class UserResource {
     @NotNull
     private String email;
 
-    @Pattern(regexp = "(^$|[0-9]{10})", message = "format template is 2348012345678 or 08012345678 or 70231123")
+    @Pattern(regexp = "(^$|[0-9]{14})", message = "format template is 2348012345678 or 08012345678 or 70231123")
     @Size(min = 7, max = 14, message = "minimum length is 7 and maximum length is 14")
     private String phoneNumber;
 

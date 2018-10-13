@@ -13,4 +13,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, QuerydslPredi
     Optional<Book> findByTitle(String title);
 
     Optional<Book> findByAuthor(String author);
+
+    Optional<Book> findByIsbn(String isbn);
 }

@@ -26,7 +26,7 @@ public class RatingController {
     }
 
     @PostMapping("rating")
-    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "POST", value = "Resource to rate a book", response = RatingResponse.class, nickname = "rating")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Great! Book has been rated successfully"),
@@ -47,7 +47,7 @@ public class RatingController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @GetMapping("average")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a book rating average", response = Double.class, nickname = "averageRating")
     @ApiResponses(value = {

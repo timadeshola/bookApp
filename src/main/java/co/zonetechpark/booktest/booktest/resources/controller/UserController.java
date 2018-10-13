@@ -31,7 +31,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @PostMapping("create")
     @ApiOperation(httpMethod = "POST", value = "Resource to create a user", response = UserResponse.class, nickname = "createUser")
     @ApiResponses(value = {
@@ -40,6 +40,7 @@ public class UserController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 408, message = "Validation Failed"),
             @ApiResponse(code = 409, message = "CONFLICT! Name already exist, please choose a different user name"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
@@ -58,7 +59,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @PutMapping("update")
     @ApiOperation(httpMethod = "PUT", value = "Resource to update a user", responseReference = "true", nickname = "updateUser")
     @ApiResponses(value = {
@@ -67,6 +68,7 @@ public class UserController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 408, message = "Validation failed"),
             @ApiResponse(code = 422, message = "Resource not found for the User ID supplied"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
@@ -75,7 +77,7 @@ public class UserController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR')")
     @DeleteMapping("delete")
     @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a user", responseReference = "true", nickname = "deleteUser")
     @ApiResponses(value = {
@@ -94,7 +96,7 @@ public class UserController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @GetMapping("all")
     @ApiOperation(httpMethod = "GET", value = "Resource to view all users", response = User.class, nickname = "viewAllUsers", notes = "You can perform search operations on this method (e.g www.zonetechpark.com/api/v1/user/all?username=author)")
     @ApiResponses(value = {
@@ -119,7 +121,7 @@ public class UserController {
     }
 
     @GetMapping("view-user")
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a user by User ID", response = UserResponse.class, nickname = "viewUserById")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "View a User by User Id"),
@@ -150,7 +152,7 @@ public class UserController {
     }
 
     @GetMapping("view-user-username")
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a user by User name", response = UserResponse.class, nickname = "viewUserByUsername")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "View a User by Username"),
@@ -180,7 +182,7 @@ public class UserController {
     }
 
     @PutMapping("status")
-    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @ApiOperation(httpMethod = "PUT", value = "Resource to toggle user status", responseReference = "true", nickname = "toggleUserStatus")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Toggle user status successful"),

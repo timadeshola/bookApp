@@ -11,10 +11,16 @@ import java.util.Optional;
 public interface RoleService {
 
     Role createRole(RoleResource resource);
+
     Role updateRole(RoleResource resource);
+
     void deleteRole(Long roleId);
+
     Page<Role> viewAllRoles(Predicate predicate, Pageable pageable);
+
     Optional<Role> viewRoleById(Long roleId);
+
     Optional<Role> viewRoleByName(String name);
+
     void toggleRoleStatus(Long roleId);
 }

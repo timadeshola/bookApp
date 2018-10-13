@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-//@RestControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ApplicationControllerAdvice {
 

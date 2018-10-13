@@ -50,14 +50,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("login")
-    /*@ApiOperation(httpMethod = "POST", value = "Resource to login into the system", responseReference = "Authentication token", nickname = "createAuthenticationToken")
+    @ApiOperation(httpMethod = "POST", value = "Resource to login into the system", responseReference = "Authentication token", nickname = "createAuthenticationToken")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Great! User authenticated successfully"),
             @ApiResponse(code = 400, message = "Something went wrong, check you request"),
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
-    })*/
+    })
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 
         try {
