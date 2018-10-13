@@ -1,16 +1,11 @@
 package co.zonetechpark.booktest.booktest.resources.controller;
 
-import co.zonetechpark.booktest.booktest.jpa.entity.Books;
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
 import co.zonetechpark.booktest.booktest.resources.model.request.RoleResource;
 import co.zonetechpark.booktest.booktest.resources.model.response.RoleResponse;
-import co.zonetechpark.booktest.booktest.resources.model.response.UserResponse;
 import co.zonetechpark.booktest.booktest.service.RoleService;
 import com.querydsl.core.types.Predicate;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/role")
 @Slf4j
+@Api(value = "api/v1/role", description = "Endpoint for role management", tags = "Role Management")
 public class RoleController {
 
     private RoleService roleService;
@@ -44,9 +41,9 @@ public class RoleController {
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
             @ApiResponse(code = 409, message = "CONFLICT! Name already exist, please choose a different role name"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
-    public ResponseEntity<RoleResponse> createRole(@RequestBody RoleResource resource) {
+    public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody RoleResource resource) {
         Role role = roleService.createRole(resource);
         RoleResponse response = new RoleResponse();
         response.setName(role.getName());
@@ -65,21 +62,20 @@ public class RoleController {
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
             @ApiResponse(code = 422, message = "Resource not found for the Role ID supplied"),
-            @ApiResponse(code = 409, message = "CONFLICT! Name already exist, please choose a different role name"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
-    public ResponseEntity<RoleResponse> updateRole(@RequestBody RoleResource resource) {
+    public ResponseEntity<RoleResponse> updateRole(@Valid @RequestBody RoleResource resource) {
         Role role = roleService.updateRole(resource);
         RoleResponse response = new RoleResponse();
         response.setName(role.getName());
         response.setStatus(role.getStatus());
         response.setDateCreated(role.getDateCreated());
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_AUTHOR')")
     @DeleteMapping("delete")
-    @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a book", responseReference = "true", nickname = "deleteRole")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a role", responseReference = "true", nickname = "deleteRole")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Great! Role deleted successfully"),
             @ApiResponse(code = 400, message = "Something went wrong, check you request"),
@@ -87,7 +83,7 @@ public class RoleController {
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
             @ApiResponse(code = 422, message = "Resource not found for the Role ID supplied"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
     public ResponseEntity<Boolean> deleteRole(
             @ApiParam(name = "roleId", value = "Provide Role ID", required = true)
@@ -98,13 +94,14 @@ public class RoleController {
 
     @PreAuthorize("hasRole('ROLE_AUTHOR')")
     @GetMapping("all")
-    @ApiOperation(httpMethod = "GET", value = "Resource to view all roles", response = Role.class, nickname = "viewAllRoles")
+    @ApiOperation(httpMethod = "GET", value = "Resource to view all roles", response = Role.class, nickname = "viewAllRoles", notes = "You can perform search operations on this method (e.g www.zonetechpark.com/api/v1/role/all?name=author)")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "View All Roles"),
             @ApiResponse(code = 400, message = "Something went wrong, check you request"),
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
     public ResponseEntity<Page<Role>> viewAllRoles(@QuerydslPredicate(root = Role.class)Predicate predicate,
                                                    @ApiParam(name = "page", value = "default number of page", required = true)
@@ -116,6 +113,7 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_AUTHOR')")
     @GetMapping("view-role")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a role by Role ID", response = RoleResponse.class, nickname = "viewRoleById")
     @ApiResponses(value = {
@@ -124,7 +122,7 @@ public class RoleController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
     public ResponseEntity<RoleResponse> viewRoleById(
             @ApiParam(name = "roleId", value = "Provide Role ID", required = true)
@@ -138,10 +136,12 @@ public class RoleController {
             response.setDateCreated(role.getDateCreated());
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("view")
+    @PreAuthorize("hasRole('ROLE_AUTHOR')")
+    @GetMapping("view-role-name")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a role by Role Name", response = RoleResponse.class, nickname = "viewRoleByName")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "View a Role"),
@@ -149,11 +149,11 @@ public class RoleController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
     public ResponseEntity<RoleResponse> viewRoleByName(
-            @ApiParam(name = "roleId", value = "Provide Role ID", required = true)
-            @RequestParam(value = "roleId") String name) {
+            @ApiParam(name = "name", value = "Provide Role Name", required = true)
+            @RequestParam(value = "name") String name) {
         Optional<Role> optionalRole = roleService.viewRoleByName(name);
         RoleResponse response = new RoleResponse();
         if(optionalRole.isPresent()) {
@@ -175,7 +175,7 @@ public class RoleController {
             @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
             @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
-            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
     public ResponseEntity<Boolean> toggleRoleStatus(
             @ApiParam(name = "roleId", value = "Provide Role ID", required = true)

@@ -33,17 +33,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private MyUserDetails jwtUserDetailsService;
     private TokenHelper tokenHelper;
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    private DataSource dataSource;
     private PasswordEncoder passwordEncoder;
     private CsrfSecurityRequestMatcher csrfSecurityRequestMatcher;
 
     @Autowired
-    public WebSecurityConfig(MyUserDetails jwtUserDetailsService, TokenHelper tokenHelper, RestAuthenticationEntryPoint restAuthenticationEntryPoint, PasswordEncoder passwordEncoder, DataSource dataSource, CsrfSecurityRequestMatcher csrfSecurityRequestMatcher) {
+    public WebSecurityConfig(MyUserDetails jwtUserDetailsService, TokenHelper tokenHelper, RestAuthenticationEntryPoint restAuthenticationEntryPoint, PasswordEncoder passwordEncoder, CsrfSecurityRequestMatcher csrfSecurityRequestMatcher) {
         this.jwtUserDetailsService = jwtUserDetailsService;
         this.tokenHelper = tokenHelper;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.passwordEncoder = passwordEncoder;
-        this.dataSource = dataSource;
         this.csrfSecurityRequestMatcher = csrfSecurityRequestMatcher;
     }
 
@@ -85,18 +83,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().requireCsrfProtectionMatcher(csrfSecurityRequestMatcher).csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).disable();
 
-        http.authorizeRequests().and().rememberMe().rememberMeParameter("remember-me").tokenRepository(persistentTokenRepository()).tokenValiditySeconds(86400);
-
         http.cors();
 
-
-    }
-
-    @Bean
-    public PersistentTokenRepository persistentTokenRepository() {
-        JdbcTokenRepositoryImpl tokenRepositoryImpl = new JdbcTokenRepositoryImpl();
-        tokenRepositoryImpl.setDataSource(dataSource);
-        return tokenRepositoryImpl;
     }
 
     @Override

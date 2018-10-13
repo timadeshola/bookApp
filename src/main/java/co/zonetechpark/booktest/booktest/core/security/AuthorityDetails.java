@@ -23,10 +23,8 @@ public class AuthorityDetails {
             if (role.getStatus().equals(false)) {
                 throw new CustomException("Role has been disabled", HttpStatus.LOCKED);
             }
-            log.info("Role --> {}", role);
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
         }
-        log.info("authorities --> {}", authorities);
         return authorities;
     }
 

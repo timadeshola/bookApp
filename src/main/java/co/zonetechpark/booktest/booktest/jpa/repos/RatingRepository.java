@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface RatingRepository extends JpaRepository<Rating, Long>, QuerydslPredicateExecutor<Rating> {
 
-    List<Rating> findRatingByBooks_Id(Long bookId);
+    List<Rating> findRatingByBook_Id(Long bookId);
 }

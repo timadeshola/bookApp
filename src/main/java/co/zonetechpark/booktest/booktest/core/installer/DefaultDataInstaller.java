@@ -44,9 +44,9 @@ public class DefaultDataInstaller implements ApplicationListener<ContextRefreshe
         final Set<Role> reviewerRole = new HashSet<>(Arrays.asList(reviewer));
         final Set<Role> publisherRole = new HashSet<>(Collections.singletonList(publisher));
 
-        User authorUser = createUserIfNotFound("author", "timadeshola@yahoo.com", "John", "Adeshola", "password", "07030239912", authorRole);
-        User reviewerUser = createUserIfNotFound("reviewer", "jtestermails@gmail.com", "John", "Doe", "password", "07030239942", reviewerRole);
-        User publisheruser = createUserIfNotFound("publisher", "timadeshola@gmail.com", "Eniola", "Jonathan", "password", "07030239942", publisherRole);
+        User authorUser = createUserIfNotFound("author", "timadeshola@yahoo.com", "John", "Adeshola", "Password@123", "+2347030239912", authorRole);
+        User reviewerUser = createUserIfNotFound("reviewer", "jtestermails@gmail.com", "John", "Doe", "Password@123", "+2347030239942", reviewerRole);
+        User publisheruser = createUserIfNotFound("publisher", "timadeshola@gmail.com", "Eniola", "Jonathan", "Password@123", "+2347030239942", publisherRole);
 
         alreadySetup = Boolean.TRUE;
     }

@@ -1,7 +1,7 @@
 package co.zonetechpark.booktest.booktest.service.impl;
 
 import co.zonetechpark.booktest.booktest.core.CustomException;
-import co.zonetechpark.booktest.booktest.jpa.entity.Books;
+import co.zonetechpark.booktest.booktest.jpa.entity.Book;
 import co.zonetechpark.booktest.booktest.jpa.entity.Rating;
 import co.zonetechpark.booktest.booktest.jpa.entity.User;
 import co.zonetechpark.booktest.booktest.jpa.repos.BookRepository;
@@ -45,14 +45,14 @@ public class RatingServiceImpl implements RatingService {
         }
         User user = optionalUser.get();
 
-        Optional<Books> booksOptional = bookRepository.findById(resource.getBookId());
+        Optional<Book> booksOptional = bookRepository.findById(resource.getBookId());
         if(!booksOptional.isPresent()) {
             throw new CustomException("Book not found", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        Books books = booksOptional.get();
+        Book book = booksOptional.get();
 
         rating.setUser(user);
-        rating.setBooks(books);
+        rating.setBook(book);
         rating.setComment(resource.getComment());
         rating.setRating(resource.getRating());
         return ratingRepository.save(rating);
@@ -60,9 +60,9 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Double ratingAverage(Long bookId) {
-        List<Rating> ratingByBooks_id = ratingRepository.findRatingByBooks_Id(bookId);
+        List<Rating> ratings = ratingRepository.findRatingByBook_Id(bookId);
 
-        Double average = ratingByBooks_id.stream().collect(Collectors.averagingDouble(Rating::getRating));
+        Double average = ratings.stream().collect(Collectors.averagingDouble(Rating::getRating));
         log.info("AVERAGE RATING ===========> {}", average);
         return average;
     }

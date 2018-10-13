@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "BOOKS")
+@Table(name = "AUTHOR_BOOK")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -19,7 +20,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode
 @Audited
-public class Books implements Serializable {
+public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,7 @@ public class Books implements Serializable {
     private String title;
 
     @Column(name = "author")
+    @NonNull
     private String author;
 
     @Column(name = "status")

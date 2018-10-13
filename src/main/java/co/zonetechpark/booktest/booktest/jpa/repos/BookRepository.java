@@ -1,6 +1,6 @@
 package co.zonetechpark.booktest.booktest.jpa.repos;
 
-import co.zonetechpark.booktest.booktest.jpa.entity.Books;
+import co.zonetechpark.booktest.booktest.jpa.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<Books, Long>, QuerydslPredicateExecutor<Books> {
+public interface BookRepository extends JpaRepository<Book, Long>, QuerydslPredicateExecutor<Book> {
 
-    Optional<Books> findByTitle(String title);
+    Optional<Book> findByTitle(String title);
 
-    Optional<Books> findByAuthor(String author);
+    Optional<Book> findByAuthor(String author);
 }

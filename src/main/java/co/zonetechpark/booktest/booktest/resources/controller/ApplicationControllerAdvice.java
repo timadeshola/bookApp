@@ -7,16 +7,19 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 @Slf4j
 public class ApplicationControllerAdvice {
 
@@ -67,4 +70,9 @@ public class ApplicationControllerAdvice {
         log.error("Request timed out / bad connections ==> {}", e.getMessage());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected void handleMethodArgumentNotValid(HttpServletResponse res, Exception e) throws IOException {
+        res.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "Validation Failed");
+        log.error("Validation Failed ==> {}", e.getMessage());
+    }
 }

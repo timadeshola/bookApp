@@ -9,6 +9,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -28,7 +32,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, updatable = false)
     @NonNull
     private String username;
 
@@ -46,7 +50,7 @@ public class User implements Serializable {
     @Transient
     private String fullName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @NonNull
     private String email;
 
