@@ -53,7 +53,7 @@ public class DefaultDataInstaller implements ApplicationListener<ContextRefreshe
         createUserIfNotFound("author", "author@example.com", "Peter", "Verhas", "Password@123", "2347012345675", authorRole);
         createUserIfNotFound("reviewer", "reviewer@example.com", "Jeff", "Friesen", "Password@123", "2347012345676", reviewerRole);
         createUserIfNotFound("publisher", "publisher@example.com", "Denim", "Pinto", "Password@123", "2347012345677", publisherRole);
-        createUserIfNotFound("editors", "editor@example.com", "Kunal", "Parikh", "Password@123", "2347012345678", editorRole);
+        createUserIfNotFound("editor", "editor@example.com", "Kunal", "Parikh", "Password@123", "2347012345678", editorRole);
 
         createBookIfNotExist("Peter Verhas", "Java 9 Programming By Example");
         createBookIfNotExist("Ken Arnold, James Gosling, David Holmes", "Java Programming Language");
