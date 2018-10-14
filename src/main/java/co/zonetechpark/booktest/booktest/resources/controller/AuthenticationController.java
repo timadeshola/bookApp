@@ -1,6 +1,7 @@
 package co.zonetechpark.booktest.booktest.resources.controller;
 
 import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
+import co.zonetechpark.booktest.booktest.core.security.AuthorityDetails;
 import co.zonetechpark.booktest.booktest.core.security.JwtAuthenticationRequest;
 import co.zonetechpark.booktest.booktest.core.security.TokenHelper;
 import co.zonetechpark.booktest.booktest.core.security.UserTokenState;
@@ -24,6 +25,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
@@ -38,15 +41,17 @@ public class AuthenticationController {
     private TokenHelper tokenHelper;
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
+    private AuthorityDetails authorityDetails;
 
     @Value("${jwt.expires.in}")
     private String expiresIn;
 
     @Autowired
-    public AuthenticationController(TokenHelper tokenHelper, AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public AuthenticationController(TokenHelper tokenHelper, AuthenticationManager authenticationManager, UserRepository userRepository, AuthorityDetails authorityDetails) {
         this.tokenHelper = tokenHelper;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.authorityDetails = authorityDetails;
     }
 
     @PostMapping("login")
@@ -72,33 +77,14 @@ public class AuthenticationController {
             if (!optionalUser.isPresent()) {
                 throw new CustomException("User not found", HttpStatus.NOT_FOUND);
             }
-            String jwtToken = tokenHelper.createToken(authenticationRequest.getUsername(), optionalUser.get().getRoles());
+            User user = optionalUser.get();
+            String jwtToken = tokenHelper.createToken(authenticationRequest.getUsername(), user.getRoles());
 
             log.info("#########TOKEN::: {}", jwtToken);
             return new ResponseEntity<>(new UserTokenState(jwtToken, Long.valueOf(expiresIn)), HttpStatus.OK);
         } catch (AuthenticationException e) {
             throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-    }
-
-    @GetMapping("logout")
-    @ApiOperation(httpMethod = "GET", value = "Resource to logout of the system", responseReference = "Authentication", nickname = "logout")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Great! User logout successfully"),
-            @ApiResponse(code = 400, message = "Something went wrong, check you request"),
-            @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
-    })
-    public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Optional<User> optionalUser = userRepository.findUserByUsername(auth.getName());
-        optionalUser.ifPresent(user -> user.setLastLogoutDate(new Timestamp(System.currentTimeMillis())));
-        optionalUser.ifPresent(user -> userRepository.saveAndFlush(user));
-        auth.setAuthenticated(false);
-        new SecurityContextLogoutHandler().logout(request, response, auth);
-        return new ResponseEntity<>("Logout Successfully", HttpStatus.OK);
     }
 
     @GetMapping("csrf-token")
