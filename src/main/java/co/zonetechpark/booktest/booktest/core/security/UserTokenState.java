@@ -1,8 +1,5 @@
 package co.zonetechpark.booktest.booktest.core.security;
 
-/**
- * Created by timmy
- */
 public class UserTokenState {
     private String access_token;
     private Long expires_in;

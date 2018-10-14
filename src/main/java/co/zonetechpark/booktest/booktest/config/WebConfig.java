@@ -1,5 +1,6 @@
 package co.zonetechpark.booktest.booktest.config;
 
+import co.zonetechpark.booktest.booktest.core.utils.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -9,20 +10,14 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
-
-import static co.zonetechpark.booktest.booktest.core.internal.ApplicationConstant.FORMATTER_;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -70,7 +65,7 @@ public class WebConfig implements WebMvcConfigurer {
                 MappingJackson2HttpMessageConverter jsonMessageConverter = (MappingJackson2HttpMessageConverter) converter;
                 ObjectMapper objectMapper = jsonMessageConverter.getObjectMapper();
                 objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-                objectMapper.setDateFormat(FORMATTER_);
+                objectMapper.setDateFormat(AppUtils.FORMATTER_);
                 break;
             }
         }

@@ -1,6 +1,6 @@
 package co.zonetechpark.booktest.booktest.core.security;
 
-import co.zonetechpark.booktest.booktest.core.CustomException;
+import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
 import co.zonetechpark.booktest.booktest.jpa.entity.User;
 import co.zonetechpark.booktest.booktest.jpa.repos.UserRepository;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package co.zonetechpark.booktest.booktest.core.security;
 
-import co.zonetechpark.booktest.booktest.core.CustomException;
+import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
 import co.zonetechpark.booktest.booktest.jpa.entity.User;
 import co.zonetechpark.booktest.booktest.jpa.repos.UserRepository;
@@ -109,8 +109,8 @@ public class TokenHelper {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            log.info("error validating token ==> {}", e);
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("error validating token ==> {}", e.getMessage());
+            throw new CustomException("Expired or invalid JWT token", HttpStatus.UNAUTHORIZED);
         }
     }
 

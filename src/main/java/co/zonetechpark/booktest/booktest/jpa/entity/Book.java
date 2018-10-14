@@ -1,5 +1,6 @@
 package co.zonetechpark.booktest.booktest.jpa.entity;
 
+import co.zonetechpark.booktest.booktest.core.utils.AppUtils;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
-@Table(name = "AUTHOR_BOOK")
+@Table(name = "BOOK")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -63,13 +64,9 @@ public class Book implements Serializable {
     }
 
     public String getIsbn() {
-        return "ISBN" + "-" + generateUUIDNumber();
+        return "ISBN" + "-" + AppUtils.generateUUIDNumber();
     }
 
-    private static String generateUUIDNumber() {
-        String value = UUID.randomUUID().toString();
-        String[] v =value.split("-");
-        return (v[2]+"-"+v[3]).toUpperCase();
-    }
+
 
 }

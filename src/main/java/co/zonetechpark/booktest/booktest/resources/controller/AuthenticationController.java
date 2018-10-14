@@ -1,6 +1,6 @@
 package co.zonetechpark.booktest.booktest.resources.controller;
 
-import co.zonetechpark.booktest.booktest.core.CustomException;
+import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
 import co.zonetechpark.booktest.booktest.core.security.JwtAuthenticationRequest;
 import co.zonetechpark.booktest.booktest.core.security.TokenHelper;
 import co.zonetechpark.booktest.booktest.core.security.UserTokenState;

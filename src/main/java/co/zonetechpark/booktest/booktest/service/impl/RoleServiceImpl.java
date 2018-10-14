@@ -1,6 +1,6 @@
 package co.zonetechpark.booktest.booktest.service.impl;
 
-import co.zonetechpark.booktest.booktest.core.CustomException;
+import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
 import co.zonetechpark.booktest.booktest.jpa.repos.RoleRepository;
 import co.zonetechpark.booktest.booktest.resources.model.request.RoleResource;
