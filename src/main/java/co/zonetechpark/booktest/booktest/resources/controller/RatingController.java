@@ -25,7 +25,7 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-    @PostMapping("rating")
+    @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "POST", value = "Resource to rate a book", response = RatingResponse.class, nickname = "rating")
     @ApiResponses(value = {

@@ -1,6 +1,7 @@
 package co.zonetechpark.booktest.booktest.service.impl;
 
 import co.zonetechpark.booktest.booktest.core.exceptions.CustomException;
+import co.zonetechpark.booktest.booktest.jpa.entity.Book;
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
 import co.zonetechpark.booktest.booktest.jpa.entity.User;
 import co.zonetechpark.booktest.booktest.jpa.repos.RoleRepository;
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void toggleUserStatus(Long userId) {
+    public Boolean toggleUserStatus(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -108,6 +109,8 @@ public class UserServiceImpl implements UserService {
                 user.setStatus(true);
             }
             userRepository.saveAndFlush(user);
+            return true;
         }
+        return false;
     }
 }

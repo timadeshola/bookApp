@@ -13,11 +13,13 @@ import java.sql.Timestamp;
 @Table(name = "ROLES")
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 @Audited
+@Builder
 public class Role implements GrantedAuthority, Serializable {
 
     @Id

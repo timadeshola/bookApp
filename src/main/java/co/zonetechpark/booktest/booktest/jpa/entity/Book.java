@@ -13,11 +13,13 @@ import java.util.UUID;
 @Table(name = "BOOK")
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 @Audited
+@Builder
 public class Book implements Serializable {
 
     @Id

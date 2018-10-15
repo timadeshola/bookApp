@@ -41,4 +41,9 @@ public class AppUtils {
         String values = secondIndex + "-" + thirdIndex;
         return AppUtils.capitalise(values);
     }
+
+    public static <T> String toJSON(T t) {
+        return new Gson().toJson(t);
+    }
+
 }

@@ -26,5 +26,5 @@ public interface BookService {
 
     Optional<Book> viewBookByIsbn(String isbn);
 
-    void toggleBookStatus(Long bookId);
+    Boolean toggleBookStatus(Long bookId);
 }

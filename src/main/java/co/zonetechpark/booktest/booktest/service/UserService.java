@@ -16,5 +16,5 @@ public interface UserService {
     Page<User> viewAllUsers(Predicate predicate, Pageable pageable);
     Optional<User> viewUserById(Long userId);
     Optional<User> viewUserByUsername(String username);
-    void toggleUserStatus(Long userId);
+    Boolean toggleUserStatus(Long userId);
 }

@@ -70,7 +70,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public void toggleRoleStatus(Long roleId) {
+    public Boolean toggleRoleStatus(Long roleId) {
         Optional<Role> optionalRole = roleRepository.findById(roleId);
         if(optionalRole.isPresent()) {
             Role role = optionalRole.get();
@@ -80,6 +80,8 @@ public class RoleServiceImpl implements RoleService {
                 role.setStatus(false);
             }
             roleRepository.saveAndFlush(role);
+            return true;
         }
+        return false;
     }
 }

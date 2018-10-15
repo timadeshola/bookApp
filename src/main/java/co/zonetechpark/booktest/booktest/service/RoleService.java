@@ -22,5 +22,5 @@ public interface RoleService {
 
     Optional<Role> viewRoleByName(String name);
 
-    void toggleRoleStatus(Long roleId);
+    Boolean toggleRoleStatus(Long roleId);
 }

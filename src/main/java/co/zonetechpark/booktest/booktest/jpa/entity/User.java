@@ -21,11 +21,13 @@ import java.util.Set;
 @Table(name = "USERS")
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 @Audited
+@Builder
 public class User implements Serializable {
 
     @Id
@@ -37,6 +39,7 @@ public class User implements Serializable {
     private String username;
 
     @Column(name = "password")
+    @NonNull
     private String password;
 
     @Column(name = "first_name")

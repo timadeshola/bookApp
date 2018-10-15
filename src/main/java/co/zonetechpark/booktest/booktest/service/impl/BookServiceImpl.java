@@ -84,7 +84,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void toggleBookStatus(Long bookId) {
+    public Boolean toggleBookStatus(Long bookId) {
         Optional<Book> optionalBooks = bookRepository.findById(bookId);
         if(optionalBooks.isPresent()) {
             Book book = optionalBooks.get();
@@ -94,6 +94,8 @@ public class BookServiceImpl implements BookService {
                 book.setStatus(true);
             }
             bookRepository.saveAndFlush(book);
+            return true;
         }
+        return false;
     }
 }

@@ -1,17 +1,19 @@
 package co.zonetechpark.booktest.booktest.resources.model.request;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserResource {
 
     private Long id;

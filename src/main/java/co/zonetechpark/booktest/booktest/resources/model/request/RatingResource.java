@@ -1,5 +1,6 @@
 package co.zonetechpark.booktest.booktest.resources.model.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
+@Builder
 public class RatingResource {
 
     private Long id;
