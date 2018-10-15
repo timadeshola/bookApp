@@ -1,5 +1,6 @@
 package co.zonetechpark.booktest.booktest.resources.model.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -14,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserResource {
 
     private Long id;
