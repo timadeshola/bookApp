@@ -1,8 +1,8 @@
 package co.zonetechpark.booktest.booktest.testcases.repository;
 
 import co.zonetechpark.booktest.booktest.jpa.entity.Role;
-import co.zonetechpark.booktest.booktest.jpa.entity.User;
-import co.zonetechpark.booktest.booktest.jpa.repos.UserRepository;
+import co.zonetechpark.booktest.booktest.jpa.entity.Role;
+import co.zonetechpark.booktest.booktest.jpa.repos.RoleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,70 +21,59 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+public class RoleRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
-    private User user;
+    private Role role;
 
     @Before
     public void setUp() {
-        user = new User();
+        role = new Role();
     }
     @Test
-    public void createUserTest() {
-        Role role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(role);
-        user = User.builder().id(10L).username("jadeshola").password("Password@123").firstName("John").lastName("Adeshola")
-                .fullName("John Adeshola").email("timadeshola@gmail.com").status(true).phoneNumber("2347030239942")
-                .dateUpdated(null).dateDeleted(null).roles(roleSet).build();
-        user = userRepository.save(user);
-        assertThat(user.getUsername()).isEqualTo("jadeshola");
+    public void createRoleTest() {
+        role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
+        role = roleRepository.saveAndFlush(role);
+        assertThat(role.getName()).isEqualTo("AUTHOR");
     }
 
     @Test
-    public void updateUserTest() {
-        Role role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(role);
-        user = User.builder().id(10L).username("jadeshola").password("Password@123").firstName("John").lastName("Adeshola1")
-                .fullName("John Adeshola").email("timadeshola@gmail.com").status(true).phoneNumber("2347030239942")
-                .dateUpdated(null).dateDeleted(null).roles(roleSet).build();
-        user = userRepository.saveAndFlush(user);
-        assertThat(user.getUsername()).isEqualTo("jadeshola");
+    public void updateRoleTest() {
+        role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
+        role = roleRepository.save(role);
+        assertThat(role.getName()).isEqualTo("AUTHOR");
     }
 
     @Test
-    public void viewUserByUsername() {
-        Optional<User> optionalUser = userRepository.findUserByUsername("jadeshola");
-        if(optionalUser.isPresent()) {
-            user = optionalUser.get();
-            assertThat(user.getUsername()).isEqualTo("jadeshola");
-            assertThat(user.getUsername()).isNotNull();
-            assertThat(user.getUsername()).isIn(user);
+    public void viewRoleByName() {
+        Optional<Role> optionalRole = roleRepository.findRoleByName("AUTHOR");
+        if(optionalRole.isPresent()) {
+            role = optionalRole.get();
+            assertThat(role.getName()).isEqualTo("AUTHOR");
+            assertThat(role.getName()).isNotNull();
         }
     }
 
     @Test
-    public void viewUserById() {
-        Optional<User> optionalUser = userRepository.findById(1L);
-        if(optionalUser.isPresent()) {
-            user = optionalUser.get();
-            assertThat(user.getUsername()).isEqualTo("author");
-            assertThat(user.getUsername()).isNotNull();
-            assertThat(user.getUsername()).isIn(user);
+    public void viewRoleById() {
+        Optional<Role> optionalRole = roleRepository.findById(1L);
+        if(optionalRole.isPresent()) {
+            role = optionalRole.get();
+            assertThat(role.getName()).isEqualTo("AUTHOR");
+            assertThat(role.getName()).isNotNull();
+            assertThat(role.getName()).isIn(role);
         }
     }
 
     @Test
-    public void deleteUserById() {
-        Optional<User> optionalUser = userRepository.findById(1L);
-        if(optionalUser.isPresent()) {
-            user = optionalUser.get();
-            userRepository.deleteById(user.getId());
-            assertThat(user.getUsername()).isNotIn(user);
+    public void deleteRoleById() {
+        Optional<Role> optionalRole = roleRepository.findById(1L);
+        if(optionalRole.isPresent()) {
+            role = optionalRole.get();
+            roleRepository.deleteById(role.getId());
+            assertThat(role.getName()).isNotIn(role);
         }
     }
 }

@@ -1,8 +1,7 @@
 package co.zonetechpark.booktest.booktest.testcases.repository;
 
-import co.zonetechpark.booktest.booktest.jpa.entity.Role;
-import co.zonetechpark.booktest.booktest.jpa.entity.Role;
-import co.zonetechpark.booktest.booktest.jpa.repos.RoleRepository;
+import co.zonetechpark.booktest.booktest.jpa.entity.Book;
+import co.zonetechpark.booktest.booktest.jpa.repos.BookRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,68 +11,85 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class RoleRepositoryTest {
+public class BookRepositoryTest {
 
     @Autowired
-    private RoleRepository roleRepository;
+    private BookRepository bookRepository;
 
-    private Role role;
+    private Book book;
 
     @Before
     public void setUp() {
-        role = new Role();
+        book = new Book();
     }
     @Test
-    public void createRoleTest() {
-        role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
-        role = roleRepository.saveAndFlush(role);
-        assertThat(role.getName()).isEqualTo("AUTHOR");
-    }
-
-    @Test
-    public void updateRoleTest() {
-        role = Role.builder().id(1L).name("AUTHOR").dateCreated(new Timestamp(System.currentTimeMillis())).dateUpdated(null).dateDeleted(null).build();
-        role = roleRepository.save(role);
-        assertThat(role.getName()).isEqualTo("AUTHOR");
+    public void createBookTest() {
+        book = Book.builder().id(10L).isbn("ISBN-200-0P91").title("Book App").author("John Adeshola").status(true).build();
+        book = bookRepository.saveAndFlush(book);
+        assertThat(book.getAuthor()).isEqualTo("John Adeshola");
     }
 
     @Test
-    public void viewRoleByName() {
-        Optional<Role> optionalRole = roleRepository.findRoleByName("AUTHOR");
-        if(optionalRole.isPresent()) {
-            role = optionalRole.get();
-            assertThat(role.getName()).isEqualTo("AUTHOR");
-            assertThat(role.getName()).isNotNull();
+    public void updateBookTest() {
+        book = Book.builder().id(10L).isbn("ISBN-200-0P91").title("Book App").author("John Adeshola").status(true).build();
+        book = bookRepository.save(book);
+        assertThat(book.getAuthor()).isEqualTo("John Adeshola");
+    }
+
+    @Test
+    public void viewBookByTitle() {
+        Optional<Book> optionalBook = bookRepository.findByTitle("Java 9 Programming By Example");
+        if(optionalBook.isPresent()) {
+            book = optionalBook.get();
+            assertThat(book.getAuthor()).isEqualTo("Peter Verhas");
+            assertThat(book.getAuthor()).isNotNull();
         }
     }
 
     @Test
-    public void viewRoleById() {
-        Optional<Role> optionalRole = roleRepository.findById(1L);
-        if(optionalRole.isPresent()) {
-            role = optionalRole.get();
-            assertThat(role.getName()).isEqualTo("AUTHOR");
-            assertThat(role.getName()).isNotNull();
-            assertThat(role.getName()).isIn(role);
+    public void viewBookByAuthor() {
+        Optional<Book> optionalBook = bookRepository.findByAuthor("Peter Verhas");
+        if(optionalBook.isPresent()) {
+            book = optionalBook.get();
+            assertThat(book.getAuthor()).isEqualTo("Peter Verhas");
+            assertThat(book.getAuthor()).isNotNull();
         }
     }
 
     @Test
-    public void deleteRoleById() {
-        Optional<Role> optionalRole = roleRepository.findById(1L);
-        if(optionalRole.isPresent()) {
-            role = optionalRole.get();
-            roleRepository.deleteById(role.getId());
-            assertThat(role.getName()).isNotIn(role);
+    public void viewBookByIsbn() {
+        Optional<Book> optionalBook = bookRepository.findByIsbn("ISBN-4294-B547");
+        if(optionalBook.isPresent()) {
+            book = optionalBook.get();
+            assertThat(book.getAuthor()).isEqualTo("Peter Verhas");
+            assertThat(book.getAuthor()).isNotNull();
+        }
+    }
+
+    @Test
+    public void viewBookById() {
+        Optional<Book> optionalBook = bookRepository.findById(1L);
+        if(optionalBook.isPresent()) {
+            book = optionalBook.get();
+            assertThat(book.getAuthor()).isEqualTo("Peter Verhas");
+            assertThat(book.getAuthor()).isNotNull();
+        }
+    }
+
+    @Test
+    public void deleteBookById() {
+        Optional<Book> optionalBook = bookRepository.findById(1L);
+        if(optionalBook.isPresent()) {
+            book = optionalBook.get();
+            bookRepository.deleteById(book.getId());
+            assertThat(book.getAuthor()).isNotIn(book);
         }
     }
 }
