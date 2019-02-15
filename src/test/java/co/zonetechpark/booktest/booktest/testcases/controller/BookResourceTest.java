@@ -4,11 +4,13 @@ import co.zonetechpark.booktest.booktest.jpa.entity.Book;
 import co.zonetechpark.booktest.booktest.resources.controller.BookController;
 import co.zonetechpark.booktest.booktest.resources.model.request.BookResource;
 import co.zonetechpark.booktest.booktest.service.BookService;
+import co.zonetechpark.booktest.booktest.service.JpaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,14 +29,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BookController.class)
 public class BookResourceTest {
 
+
     @Mock
     private BookService bookService;
 
+    @Mock
+    private JpaService jpaService;
+
+    @Mock
+    private ModelMapper modelMapper;
+
     private MockMvc mockMvc;
+
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, jpaService, modelMapper)).build();
     }
 
     @Test

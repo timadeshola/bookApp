@@ -65,7 +65,7 @@ public class BookRepositoryTest {
 
     @Test
     public void viewBookByIsbn() {
-        Optional<Book> optionalBook = bookRepository.findByIsbn("ISBN-4294-B547");
+        Optional<Book> optionalBook = bookRepository.findBookByIsbn("ISBN-4294-B547");
         if(optionalBook.isPresent()) {
             book = optionalBook.get();
             assertThat(book.getAuthor()).isEqualTo("Peter Verhas");

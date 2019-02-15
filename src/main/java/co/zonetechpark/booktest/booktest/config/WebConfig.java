@@ -3,6 +3,7 @@ package co.zonetechpark.booktest.booktest.config;
 import co.zonetechpark.booktest.booktest.core.utils.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,6 +70,11 @@ public class WebConfig implements WebMvcConfigurer {
                 break;
             }
         }
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
 }

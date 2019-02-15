@@ -25,6 +25,7 @@ import java.util.UUID;
 public class AppUtils {
 
     public static final SimpleDateFormat FORMATTER_ = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static String capitalise(String data) {
         if (StringUtils.isEmpty(data)) {

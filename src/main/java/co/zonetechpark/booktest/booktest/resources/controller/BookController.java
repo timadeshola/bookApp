@@ -1,15 +1,21 @@
 package co.zonetechpark.booktest.booktest.resources.controller;
 
+import co.zonetechpark.booktest.booktest.core.utils.AppUtils;
 import co.zonetechpark.booktest.booktest.jpa.entity.Book;
+import co.zonetechpark.booktest.booktest.jpa.entity.QBook;
 import co.zonetechpark.booktest.booktest.resources.model.request.BookResource;
 import co.zonetechpark.booktest.booktest.resources.model.response.BookResponse;
+import co.zonetechpark.booktest.booktest.resources.model.response.PaginateResponse;
 import co.zonetechpark.booktest.booktest.resources.model.response.UserResponse;
 import co.zonetechpark.booktest.booktest.service.BookService;
+import co.zonetechpark.booktest.booktest.service.JpaService;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQuery;
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +23,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,9 +35,13 @@ import java.util.Optional;
 public class BookController {
 
     private BookService bookService;
+    private JpaService jpaService;
+    private ModelMapper modelMapper;
 
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, JpaService jpaService, ModelMapper modelMapper) {
         this.bookService = bookService;
+        this.jpaService = jpaService;
+        this.modelMapper = modelMapper;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_EDITOR')")
@@ -91,9 +105,28 @@ public class BookController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @DeleteMapping("multi-delete")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a book", responseReference = "true", nickname = "deleteBooks")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Great! Books deleted successfully"),
+            @ApiResponse(code = 400, message = "Something went wrong, check you request"),
+            @ApiResponse(code = 401, message = "Sorry, you are not authenticated"),
+            @ApiResponse(code = 403, message = "Sorry, you are unauthorized to access the resources"),
+            @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
+            @ApiResponse(code = 422, message = "Resource not found for the Book ID supplied"),
+            @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
+    })
+    public ResponseEntity<Boolean> deleteBooks(
+            @ApiParam(name = "bookIds", value = "Provide Book IDs", required = true)
+            @RequestParam(value = "bookIds") List<Long> bookIds) {
+        bookService.deleteBooks(bookIds);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @GetMapping("all")
-    @ApiOperation(httpMethod = "GET", value = "Resource to view all book", response = Book.class, nickname = "viewAllBooks", notes = "You can perform search operations on this method (e.g www.zonetechpark.com/api/v1/book/all?name=author)")
+    @ApiOperation(httpMethod = "GET", value = "Resource to view all book with search params", response = Book.class, nickname = "viewAllBooks", notes = "You can perform search operations on this method (e.g www.zonetechpark.com/api/v1/book/all?name=author)")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "View All Book"),
             @ApiResponse(code = 400, message = "Something went wrong, check you request"),
@@ -102,18 +135,64 @@ public class BookController {
             @ApiResponse(code = 404, message = "Resource not found, i guess your url is not correct"),
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument supplied")
     })
-    public ResponseEntity<Page<Book>> viewAllBooks(@QuerydslPredicate(root = Book.class) Predicate predicate,
-                                                   @ApiParam(name = "page", value = "default number of page", required = true)
-                                                    @RequestParam(value = "page", defaultValue = "0") int page,
-                                                   @ApiParam(name = "size", value = "default size on result set", required = true)
-                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.Direction.DESC, "dateCreated");
-        Page<Book> books = bookService.viewAllBooks(predicate, pageable);
+    public ResponseEntity<PaginateResponse> viewAllBooks(@QuerydslPredicate(root = Book.class) Predicate predicate,
+                                                         @ApiParam(name = "start", value = "default number of page", required = true) @RequestParam(value = "start", defaultValue = "0") int start,
+                                                         @ApiParam(name = "limit", value = "default size on result set", required = true) @RequestParam(value = "limit", defaultValue = "10") int limit,
+                                                         @ApiParam(name = "author", value = "Author name") @RequestParam(value = "author", required = false) String author,
+                                                         @ApiParam(name = "isbn", value = "Book ISBN number") @RequestParam(value = "isbn", required = false) String isbn,
+                                                         @ApiParam(name = "title", value = "Book title") @RequestParam(value = "title", required = false) String title,
+                                                         @ApiParam(name = "startDate", value = "Date book created") @RequestParam(value = "startDate", required = false) String startDate,
+                                                         @ApiParam(name = "endDate", value = "Date book created") @RequestParam(value = "endDate", required = false) String endDate,
+                                                         @ApiParam(name = "status", value = "Account status") @RequestParam(value = "status", required = false) Boolean status) throws ParseException {
 
-        return new ResponseEntity<>(books, HttpStatus.OK);
+        QBook qBook = QBook.book;
+        JPAQuery<Book> bookJPAQuery = jpaService.startJPAQeuryFrom(qBook).where(predicate).orderBy(qBook.dateCreated.desc());
+
+        if(startDate != null) {
+            Date startDateQuery = DateUtils.parseDate(startDate, AppUtils.DEFAULT_DATE_TIME_FORMAT, DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.getPattern());
+            bookJPAQuery.where(qBook.dateCreated.goe(new Timestamp(startDateQuery.getTime())));
+        }else {
+            qBook.dateCreated.isNull();
+        }
+        if(endDate != null) {
+            Date endDateQuery = DateUtils.parseDate(endDate, AppUtils.DEFAULT_DATE_TIME_FORMAT, DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.getPattern());
+            bookJPAQuery.where(qBook.dateCreated.lt(new Timestamp(DateUtils.addDays(endDateQuery, 1).getTime())));
+        }
+
+        if(author != null) {
+            bookJPAQuery.where(qBook.author.equalsIgnoreCase(author));
+        }else {
+            qBook.author.isNull();
+        }
+
+        if(isbn != null) {
+            bookJPAQuery.where(qBook.isbn.equalsIgnoreCase(isbn));
+        } else {
+            qBook.isbn.isNull();
+        }
+
+        if(title != null) {
+            bookJPAQuery.where(qBook.title.equalsIgnoreCase(title));
+        } else {
+            qBook.isbn.isNull();
+        }
+
+        if(status != null) {
+            bookJPAQuery.where(qBook.status.eq(status));
+        } else {
+            qBook.status.isNull();
+        }
+
+        QueryResults<Book> fetchResults = jpaService.fetchResults(bookJPAQuery.offset(start).limit(limit));
+
+        PaginateResponse response = new PaginateResponse();
+        response.setContents(fetchResults.getResults());
+        response.setTotalElements(fetchResults.getTotal());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("view-book")
+    @GetMapping("bookId")
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a book by Book ID", response = BookResponse.class, nickname = "viewBookById")
     @ApiResponses(value = {
@@ -128,18 +207,15 @@ public class BookController {
             @ApiParam(name = "bookId", value = "Provide Book ID", required = true)
             @RequestParam(value = "bookId") Long bookId) {
         Optional<Book> optionalBooks = bookService.viewBookById(bookId);
-        BookResponse response = new BookResponse();
         if (optionalBooks.isPresent()) {
             Book book = optionalBooks.get();
-            response.setTitle(book.getTitle());
-            response.setAuthor(book.getAuthor());
-            response.setDateCreated(book.getDateCreated());
+            BookResponse response = modelMapper.map(book, BookResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("view-book-title")
+    @GetMapping("title")
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a book by Title", response = BookResponse.class, nickname = "viewBookByTitle")
     @ApiResponses(value = {
@@ -154,18 +230,15 @@ public class BookController {
             @ApiParam(name = "title", value = "Provide Book Title", required = true)
             @RequestParam(value = "title") String title) {
         Optional<Book> optionalBooks = bookService.viewBookByTitle(title);
-        BookResponse response = new BookResponse();
         if (optionalBooks.isPresent()) {
             Book book = optionalBooks.get();
-            response.setTitle(book.getTitle());
-            response.setAuthor(book.getAuthor());
-            response.setDateCreated(book.getDateCreated());
+            BookResponse response = modelMapper.map(book, BookResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("view-book-author")
+    @GetMapping("author")
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a book by Author", response = BookResponse.class, nickname = "viewBookByAuthor")
     @ApiResponses(value = {
@@ -180,18 +253,15 @@ public class BookController {
             @ApiParam(name = "author", value = "Provide Book Author", required = true)
             @RequestParam(value = "author") String author) {
         Optional<Book> optionalBooks = bookService.viewBookByAuthor(author);
-        BookResponse response = new BookResponse();
         if (optionalBooks.isPresent()) {
             Book book = optionalBooks.get();
-            response.setTitle(book.getTitle());
-            response.setAuthor(book.getAuthor());
-            response.setDateCreated(book.getDateCreated());
+            BookResponse response = modelMapper.map(book, BookResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("view-book-isbn")
+    @GetMapping("isbn")
     @PreAuthorize("hasAnyRole('ROLE_AUTHOR', 'ROLE_REVIEWER', 'ROLE_PUBLISHER', 'ROLE_EDITOR')")
     @ApiOperation(httpMethod = "GET", value = "Resource to view a book by ISBN Number", response = BookResponse.class, nickname = "viewBookByIsbn")
     @ApiResponses(value = {
@@ -203,15 +273,11 @@ public class BookController {
             @ApiResponse(code = 428, message = "Precondition Required, Illegal Argument")
     })
     public ResponseEntity<BookResponse> viewBookByIsbn(
-            @ApiParam(name = "isbn", value = "Provide Book ISBN Number", required = true)
-            @RequestParam(value = "isbn") String isbn) {
+            @ApiParam(name = "isbn", value = "Provide Book ISBN Number", required = true) @RequestParam(value = "isbn") String isbn) {
         Optional<Book> optionalBooks = bookService.viewBookByIsbn(isbn);
-        BookResponse response = new BookResponse();
         if (optionalBooks.isPresent()) {
             Book book = optionalBooks.get();
-            response.setTitle(book.getTitle());
-            response.setAuthor(book.getAuthor());
-            response.setDateCreated(book.getDateCreated());
+            BookResponse response = modelMapper.map(book, BookResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

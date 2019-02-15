@@ -6,6 +6,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
@@ -15,6 +16,8 @@ public interface BookService {
     Book updateBook(BookResource resource);
 
     void deleteBook(Long bookId);
+
+    void deleteBooks(List<Long> bookIds);
 
     Page<Book> viewAllBooks(Predicate predicate, Pageable pageable);
 

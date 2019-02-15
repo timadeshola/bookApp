@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,6 +60,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public void deleteBooks(List<Long> bookIds) {
+        List<Book> books = bookRepository.findAllById(bookIds);
+        if(books.isEmpty()) {
+            throw new CustomException("Book is not available", HttpStatus.NOT_FOUND);
+        }
+        bookRepository.deleteAll(books);
+    }
+
+    @Override
     public Page<Book> viewAllBooks(Predicate predicate, Pageable pageable) {
         return bookRepository.findAll(predicate, pageable);
     }
@@ -80,7 +90,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Optional<Book> viewBookByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn);
+        return bookRepository.findBookByIsbn(isbn);
     }
 
     @Override
