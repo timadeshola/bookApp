@@ -52,7 +52,7 @@ S/N		Role			Access Control
 4.		Publisher		Regular User
 
 
-Super Admi - Role Access Control Definition:
+Super Admin - Role Access Control Definition:
 User: 	Can Create User, Update User, Delete User, Toggle User Status, View All Users, View a user, 
 Role: 	Create Role, Update Role, Delete Role, Toggle Role Status, View All Roles, View Role
 Book: 	Create Book, Update Book, Delete Book, Toggle Book Status, View All Books, View Book

@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>co.zonetechpark.book-test</groupId>
+    <groupId>com.book-test</groupId>
     <artifactId>book-test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>book-test</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Pet project on spring boot data jpa</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -163,6 +163,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
